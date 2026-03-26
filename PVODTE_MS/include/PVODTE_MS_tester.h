@@ -1,3 +1,5 @@
+#pragma once
+
 #include "PVODTE_MS.h"
 
 void ODTE_TIME_TEST(int depth, int N_attribute, int msgbit, int cyctimes, bool debug);

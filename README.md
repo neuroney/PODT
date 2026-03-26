@@ -2,84 +2,156 @@
 
 PODT is a CMake-based C++ research artifact for secure decision tree evaluation. This repository accompanies the following paper:
 
-> J. Li and L. F. Zhang. ``Silent Guardians: Independent and Secure Decision Tree Evaluation Without Chatter.'' *IEEE Transactions on Dependable and Secure Computing*, 2026. [https://doi.org/10.1109/TDSC.2026.3675596](https://doi.org/10.1109/TDSC.2026.3675596)
+> J. Li and L. F. Zhang. `Silent Guardians: Independent and Secure Decision Tree Evaluation Without Chatter.` *IEEE Transactions on Dependable and Secure Computing*, 2026. [https://doi.org/10.1109/TDSC.2026.3675596](https://doi.org/10.1109/TDSC.2026.3675596)
 
-The codebase contains three protocol implementations used for paper-aligned benchmarking and validation:
+The repository contains three protocol implementations:
 
-| Component | Security setting | Role in the artifact |
+| Component | Security setting | Notes |
 | --- | --- | --- |
-| `ODTE_SH` | Semi-honest | Semi-honest reference implementation |
-| `PVODTE_MS` | Maliciously secure | Maliciously secure implementation built around `HSS`-based components |
-| `PVODTE_MH` | Maliciously secure | Maliciously secure implementation built around `VHSS`-based components |
+| `ODTE_SH` | Semi-honest | Baseline implementation |
+| `PVODTE_MS` | Maliciously secure | Variant with verification parameter `A` |
+| `PVODTE_MH` | Maliciously secure | Variant based on `VHSS` verification |
 
-This repository is intended for experimental evaluation and reproducibility. It is not packaged or audited as a production cryptographic library.
+This code is intended for experimental evaluation and reproducibility. It is not a production cryptographic library.
 
-## Repository Structure
+## Repository Layout
 
 ```text
 .
 ├── CMakeLists.txt
-├── cmake/              # Custom CMake find-modules for NTL and GMP
-├── common/             # Shared helpers and cryptographic primitives
-├── ODTE_SH/            # Semi-honest protocol implementation
-├── PVODTE_MS/          # Maliciously secure protocol implementation
-└── PVODTE_MH/          # Maliciously secure protocol implementation
+├── CMakePresets.json
+├── cmake/
+├── common/
+├── ODTE_SH/
+├── PVODTE_MS/
+├── PVODTE_MH/
+└── .github/workflows/ci.yml
 ```
 
-Each protocol directory follows the same internal organization:
-
-- `include/`: public headers
-- `src/`: implementation files
-- `test/main.cpp`: benchmark driver
-
-## Build Requirements
-
-The project requires:
+## Requirements
 
 - CMake `>= 3.25`
 - A C++11-compatible compiler
 - [NTL](https://libntl.org/)
 - GMP
 
-The top-level build configuration resolves NTL and GMP via `find_package`, so both dependencies must be installed and visible to CMake before configuration.
-
-## Build
+Example package names:
 
 ```sh
-cmake -S . -B build
-cmake --build build
+# Ubuntu / Debian
+sudo apt-get update
+sudo apt-get install -y cmake g++ libntl-dev libgmp-dev
 ```
-
-If CMake cannot locate `NTL` or `GMP`, provide the corresponding installation prefix through standard CMake discovery variables such as `CMAKE_PREFIX_PATH`.
-
-## Running the Benchmarks
-
-The build produces one executable for each protocol:
 
 ```sh
-./build/ODTE_SH/ODTE_SH
-./build/PVODTE_MS/PVODTE_MS
-./build/PVODTE_MH/PVODTE_MH
+# macOS with Homebrew
+brew install cmake ntl gmp
 ```
 
-Each benchmark driver evaluates the protocol on the same preset workload family:
+## Quick Start
+
+Configure and build:
+
+```sh
+cmake --preset default
+cmake --build --preset default
+```
+
+Run the repository smoke tests:
+
+```sh
+ctest --preset default
+```
+
+Run one protocol directly:
+
+```sh
+./build/default/ODTE_SH/ODTE_SH --quick
+./build/default/PVODTE_MS/PVODTE_MS --quick
+./build/default/PVODTE_MH/PVODTE_MH --quick
+```
+
+If the dependencies are not in a standard search path, configure with an explicit prefix:
+
+```sh
+cmake -S . -B build -DCMAKE_PREFIX_PATH=/opt/homebrew
+```
+
+You can also pass `NTL_DIR` and `GMP_DIR` directly:
+
+```sh
+cmake -S . -B build -DNTL_DIR=/path/to/ntl -DGMP_DIR=/path/to/gmp
+```
+
+## Running Benchmarks
+
+The default commands are:
+
+```sh
+./build/default/ODTE_SH/ODTE_SH
+./build/default/PVODTE_MS/PVODTE_MS
+./build/default/PVODTE_MH/PVODTE_MH
+```
+
+These run the repository's default workload family:
 
 - tree depths: `3`, `8`, `13`, `17`, `20`
 - attribute counts: `13`, `9`, `13`, `57`, `784`
 - message bit-length: `10`
-- repetitions per measurement: `5`
+- repetitions: `5`
 
-For each parameter point, the programs report phase-wise runtime statistics, including mean execution time and relative standard deviation (RSD). The measured phases cover setup, provider encryption, feature selection, secure comparison, classification generation, decision-tree evaluation, and decryption.
+Use `--quick` only for a fast end-to-end check. It runs a reduced case and is not intended for paper timings.
 
-## Reproducibility Notes
+## Command-Line Options
 
-- The benchmark drivers currently use hard-coded parameter sets defined in each `test/main.cpp`.
-- Input instances are generated inside the testing harness and are intended for protocol timing studies rather than application deployment.
-- The implementation targets research evaluation and scheme validation; it should not be interpreted as a hardened deployment artifact.
+All three executables share the same CLI:
+
+```sh
+./build/default/ODTE_SH/ODTE_SH --help
+./build/default/ODTE_SH/ODTE_SH --depth 3 --attributes 13 --msgbit 10 --cycles 3
+```
+
+Supported options:
+
+- `--quick`: run a reduced smoke-test case
+- `--depth <n>`: set tree depth for a single custom run
+- `--attributes <n>`: set attribute count for a single custom run
+- `--msgbit <n>`: set message bit-length
+- `--cycles <n>`: set timing repetitions
+- `--debug`: enable debug mode
+- `--help`: print usage
+
+To compare all three protocols on the same parameter point:
+
+```sh
+./build/default/ODTE_SH/ODTE_SH --depth 3 --attributes 13 --msgbit 10 --cycles 3
+./build/default/PVODTE_MS/PVODTE_MS --depth 3 --attributes 13 --msgbit 10 --cycles 3
+./build/default/PVODTE_MH/PVODTE_MH --depth 3 --attributes 13 --msgbit 10 --cycles 3
+```
+
+## Output
+
+Each run prints phase-wise timing statistics such as:
+
+- `Setup algo time`
+- `Provider encryption time`
+- `Feature Selection time`
+- `HSSCMP` or `VHSSCMP time`
+- `ClassificationGen time`
+- `DTevaluation 0/1 time`
+- `Decryption time`
+
+The reported values are mean time in milliseconds plus `RSD` (relative standard deviation). In `--quick` mode the default repetition count is `1`, so `RSD` is usually `0%`.
+
+## Notes
+
+- `ctest --preset default` currently runs the same `--quick` mode for all three executables.
+- The benchmark drivers generate inputs internally; this repository is aimed at protocol evaluation, not deployment.
+- The repo includes `CMakePresets.json`, `.editorconfig`, `.clang-format`, and GitHub Actions CI for basic project hygiene.
 
 ## Citation
 
-If you use this repository in academic work, please cite the associated paper:
+If you use this repository in academic work, please cite:
 
 ```bibtex
 @article{li2026silent,
@@ -94,4 +166,4 @@ If you use this repository in academic work, please cite the associated paper:
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+Released under the MIT License. See [LICENSE](LICENSE) for details.

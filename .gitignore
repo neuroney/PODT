@@ -1,4 +1,8 @@
 build/
 /.vscode
+.idea/
+.cache/
+compile_commands.json
+Testing/
 .DS_Store
 **/.DS_Store

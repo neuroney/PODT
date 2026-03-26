@@ -6,14 +6,20 @@ add_executable(PVODTE_MH
 )
 
 target_include_directories(PVODTE_MH PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-
 
 target_link_libraries(PVODTE_MH
     PRIVATE
         common
-        ${NTL_LIBRARIES}
-        ${GMP_LIBRARIES}
         m
 )
+
+podt_configure_target(PVODTE_MH)
+
+if (BUILD_TESTING)
+    add_test(
+        NAME PVODTE_MH_smoke
+        COMMAND PVODTE_MH --quick
+    )
+endif ()

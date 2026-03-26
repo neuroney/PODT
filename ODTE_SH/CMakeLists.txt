@@ -6,15 +6,20 @@ add_executable(ODTE_SH
 )
 
 target_include_directories(ODTE_SH PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-
 
 target_link_libraries(ODTE_SH
     PRIVATE
         common
-        ${NTL_LIBRARIES}
-        ${GMP_LIBRARIES}
         m
-
 )
+
+podt_configure_target(ODTE_SH)
+
+if (BUILD_TESTING)
+    add_test(
+        NAME ODTE_SH_smoke
+        COMMAND ODTE_SH --quick
+    )
+endif ()

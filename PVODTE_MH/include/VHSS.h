@@ -17,4 +17,4 @@ void VHSS_DDLog(ZZ &z, const VHSS_PK &pk, const ZZ &g);
 void VHSS_AddMemory(VHSS_MV &Mz, const VHSS_PK &pk, const VHSS_MV &Mx, const VHSS_MV &My);
 void VHSS_SubMemory(VHSS_MV &Mz, const VHSS_PK &pk, const VHSS_MV &Mx, const VHSS_MV &My);
 void VHSS_AddInput(VHSS_CT &I, const VHSS_PK &pk, const VHSS_CT &Ix, const VHSS_CT &Iy);
-void VHSS_Evaluate(VHSS_MV &y_b_res, int b, const vector<VHSS_CT> &Ix, const VHSS_PK &pk, const VHSS_EK &ekb, int &prf_key, vector<vector<int>> F_TEST);
+void VHSS_Evaluate(VHSS_MV &y_b_res, int b, const vector<VHSS_CT> &Ix, const VHSS_PK &pk, const VHSS_EK &ekb, int &prf_key, const vector<vector<int>> &F_TEST);

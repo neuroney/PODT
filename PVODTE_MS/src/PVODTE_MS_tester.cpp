@@ -2,7 +2,8 @@
 
 void ODTE_SETUP_TEST(Para &param, HSS_EK &ek0, HSS_EK &ek1, int depth, int N_attribute, int msgbit, int cyctimes, bool debug)
 {
-    double *Time = new double[cyctimes];
+    (void)debug;
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
@@ -15,9 +16,9 @@ void ODTE_SETUP_TEST(Para &param, HSS_EK &ek0, HSS_EK &ek1, int depth, int N_att
         paramTEST.t = msgbit;
         paramTEST.n = N_attribute;
         KeyGen(paramTEST, ek0TEST, ek1TEST);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "Setup algo time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
     param.h = depth;
     param.k = 2 << (depth - 1);
@@ -25,7 +26,6 @@ void ODTE_SETUP_TEST(Para &param, HSS_EK &ek0, HSS_EK &ek1, int depth, int N_att
     param.t = msgbit;
     param.n = N_attribute;
     KeyGen(param, ek0, ek1);
-    delete[] Time;
 }
 
 void ODTE_ProviderEnc_TEST(Mat<HSS_CT> &Iy,
@@ -36,7 +36,8 @@ void ODTE_ProviderEnc_TEST(Mat<HSS_CT> &Iy,
                           const vector<vector<int>> &delta,
                           const Para &param, int cyctimes, bool debug)
 {
-    double *Time = new double[cyctimes];
+    (void)debug;
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
@@ -44,12 +45,11 @@ void ODTE_ProviderEnc_TEST(Mat<HSS_CT> &Iy,
         Mat<HSS_CT> IyTEST, IdeltaTEST;
         Vec<HSS_CT> IvTEST;
         ProviderEnc(IdeltaTEST, IyTEST, IvTEST, param, Y, V, delta);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "Provider encryption time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
     ProviderEnc(Idelta, Iy, Iv, param, Y, V, delta);
-    //delete[] Time;
 }
 
 void ODTE_DATA_PREPARATION(Vec<ZZ> &X, Vec<ZZ> &Y, Vec<ZZ> &V, vector<vector<int>> &delta, const Para &param)
@@ -79,16 +79,17 @@ void ODTE_FeatureSelection2_TEST(Mat<HSS_CT> &Ix,
                                  const vec_ZZ &X,
                                  const Para &param, int cyctimes, bool debug)
 {
-    double *Time = new double[cyctimes];
+    (void)debug;
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
         Ix.kill();
         time = GetTime();
         FeatureSelection2(Ix, param, X, Idelta);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "Feature Selection time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
 }
 
@@ -112,15 +113,15 @@ void ODTE_HSSCMP_TEST(const Para &param, int b, const HSS_EK &ek0, const HSS_EK 
     HSS_EK ekb;
     ekb = b ? ek1 : ek0;
 
-    double *Time = new double[cyctimes];
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
         time = GetTime();
         HSSCMP(c_b, b, param, ekb, Ix, Iy, prf_key);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "HSSCMP time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
 }
 
@@ -152,7 +153,7 @@ void ODTE_ClassificationGen_TEST(const Para &param, int b, const HSS_EK &ek0, co
         HSS_Input(Iv[j], param.pk, V[j]);
     }
 
-    double *Time = new double[cyctimes];
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
@@ -161,9 +162,9 @@ void ODTE_ClassificationGen_TEST(const Para &param, int b, const HSS_EK &ek0, co
         vvvb.kill();
         time = GetTime();
         ClassificationGen(pcb, vvb, vvvb, b, param, ekb, cmp_resb, Iv, prf_key);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "ClassificationGen time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
 }
 
@@ -171,7 +172,7 @@ void ODTE_DTEvaluation_TEST(Vec<ZZ> &pc0, Vec<ZZ> &vv0, Vec<ZZ> &pc1, Vec<ZZ> &v
                             const Para &param, const HSS_EK &ek0, const HSS_EK &ek1, const Mat<HSS_CT> &Ix, const Mat<HSS_CT> &Iy, const Vec<HSS_CT> &Iv,
                             int cyctimes)
 {
-    double *Time = new double[cyctimes];
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
@@ -179,9 +180,9 @@ void ODTE_DTEvaluation_TEST(Vec<ZZ> &pc0, Vec<ZZ> &vv0, Vec<ZZ> &pc1, Vec<ZZ> &v
         vv0.kill();
         time = GetTime();
         DTEvaluation(pc0, vv0, vvv0, 0, param, ek0, Ix, Iy, Iv);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "DTevaluation 0 time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
 
     for (int i = 0; i < cyctimes; ++i)
@@ -190,9 +191,9 @@ void ODTE_DTEvaluation_TEST(Vec<ZZ> &pc0, Vec<ZZ> &vv0, Vec<ZZ> &pc1, Vec<ZZ> &v
         vv1.kill();
         time = GetTime();
         DTEvaluation(pc1, vv1, vvv1, 1, param, ek1, Ix, Iy, Iv);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "DTevaluation 1 time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
 }
 
@@ -201,15 +202,15 @@ void ODTE_Decryption_TEST(ZZ &res, const Para &param,
                           const Vec<ZZ> &pc_1, const Vec<ZZ> &vv_1,const Vec<ZZ> &vvv_0, const Vec<ZZ> &vvv_1,
                           int cyctimes)
 {
-    double *Time = new double[cyctimes];
+    vector<double> timings(cyctimes);
     double time, mean, stdev;
     for (int i = 0; i < cyctimes; ++i)
     {
         time = GetTime();
         ClDecryption(res, param, pc_0, vv_0, pc_1, vv_1, vvv_0, vvv_1);
-        Time[i] = GetTime() - time;
+        timings[i] = GetTime() - time;
     }
-    DataProcess(mean, stdev, Time, cyctimes);
+    DataProcess(mean, stdev, timings);
     cout << "Decryption time: " << mean * 1000 << " ms  RSD: " << stdev * 100 << "%\n";
 }
 

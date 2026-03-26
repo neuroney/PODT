@@ -26,6 +26,7 @@ void HSS_ConvertInput(HSS_MV &Mx, int idx, const HSS_PK &pk, const HSS_EK &ek, c
 
 void HSS_Mul(HSS_MV &Mz, int idx, const HSS_PK &pk, const HSS_CT &Ix, const HSS_MV &My, int &prf_key)
 {
+    (void)idx;
     ZZ temp1, temp2;
     PowerMod(temp1, Ix[0][1], My[0], pk.N2);
     PowerMod(temp2, Ix[0][0], -My[1], pk.N2);
@@ -50,12 +51,14 @@ void HSS_DDLog(ZZ &z, const HSS_PK &pk, const ZZ &g)
 
 void HSS_AddMemory(HSS_MV &Mz, const HSS_PK &pk, const HSS_MV &Mx, const HSS_MV &My)
 {
+    (void)pk;
     add(Mz[0], Mx[0], My[0]);
     add(Mz[1], Mx[1], My[1]);
 }
 
 void HSS_SubMemory(HSS_MV &Mz, const HSS_PK &pk, const HSS_MV &Mx, const HSS_MV &My)
 {
+    (void)pk;
     sub(Mz[0], Mx[0], My[0]);
     sub(Mz[1], Mx[1], My[1]);
 }
@@ -68,7 +71,7 @@ void HSS_AddInput(HSS_CT &I, const HSS_PK &pk, const HSS_CT &Ix, const HSS_CT &I
     MulMod(I[1][1], Ix[1][1], Iy[1][1], pk.N2);
 }
 
-void HSS_Evaluate(HSS_MV &y_b_res, int b, const vector<HSS_CT> &Ix, const HSS_PK &pk, const HSS_EK &ekb, int &prf_key, vector<vector<int>> F_TEST)
+void HSS_Evaluate(HSS_MV &y_b_res, int b, const vector<HSS_CT> &Ix, const HSS_PK &pk, const HSS_EK &ekb, int &prf_key, const vector<vector<int>> &F_TEST)
 {
     HSS_MV M1, Monomial, tmp;
     M1[0] = b;
@@ -77,13 +80,12 @@ void HSS_Evaluate(HSS_MV &y_b_res, int b, const vector<HSS_CT> &Ix, const HSS_PK
     y_b_res[0] = 0;
     y_b_res[1] = 0;
 
-    int i, j, k;
-    for (i = 0; i < F_TEST.size(); ++i)
+    for (std::size_t i = 0; i < F_TEST.size(); ++i)
     {
         copy(begin(M1), end(M1), begin(Monomial));
-        for (j = 0; j < Ix.size(); ++j)
+        for (std::size_t j = 0; j < Ix.size(); ++j)
         {
-            for (k = 0; k < F_TEST[i][j]; ++k)
+            for (int k = 0; k < F_TEST[i][j]; ++k)
             {
                 HSS_Mul(tmp, b, pk, Ix[j], Monomial, prf_key);
                 copy(begin(tmp), end(tmp), begin(Monomial));

@@ -7,6 +7,9 @@ void KeyGen(Para &param, HSS_EK &ek0, HSS_EK &ek1)
 
 void KeyFree(Para &param, HSS_EK &ek0, HSS_EK &ek1)
 {
+    (void)param;
+    (void)ek0;
+    (void)ek1;
     // Nothing to free for HSS_EK type (ZZ)
 }
 
@@ -20,6 +23,7 @@ void FeatureSelection2(Mat<HSS_CT> &Ix, const Para &param, const vec_ZZ &x, cons
         for (int j = 0; j < param.t; j++)
         {
             first = true;
+            HSS_Input(temp, param.pk, ZZ(0));
             for (int k = 0; k < param.n; ++k)
             {
                 if (bit(x[k], j) == 1)

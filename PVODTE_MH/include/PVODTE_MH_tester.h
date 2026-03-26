@@ -1,8 +1,10 @@
+#pragma once
+
 #include "PVODTE_MH.h"
 
 void ODTE_TIME_TEST(int depth, int N_attribute, int msgbit, int cyctimes, bool debug);
 
-void ODTE_SETUP_TEST(Para &param, VHSS_EK &ek0, VHSS_EK &ek1, int depth, int N_attribute, int msgbit, int cyctimes, bool debug);
+void ODTE_SETUP_TEST(Para &param, VHSS_EK &ek0, VHSS_EK &ek1, VHSS_VK &vk, int depth, int N_attribute, int msgbit, int cyctimes, bool debug);
 
 void ODTE_ProviderEnc_TEST(Mat<VHSS_CT> &Iy,
                            Vec<VHSS_CT> &Iv,

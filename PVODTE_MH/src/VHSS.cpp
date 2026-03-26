@@ -34,6 +34,7 @@ void VHSS_ConvertInput(VHSS_MV &Mx, int idx, const VHSS_PK &pk, const VHSS_EK &e
 
 void VHSS_Mul(VHSS_MV &Mz, int idx, const VHSS_PK &pk, const VHSS_CT &Ix, const VHSS_MV &My, int &prf_key)
 {
+    (void)idx;
     ZZ temp1, temp2;
     PowerMod(temp1, Ix[0][1], My[0], pk.N2);
     PowerMod(temp2, Ix[0][0], -My[1], pk.N2);
@@ -70,6 +71,7 @@ void VHSS_DDLog(ZZ &z, const VHSS_PK &pk, const ZZ &g)
 
 void VHSS_AddMemory(VHSS_MV &Mz, const VHSS_PK &pk, const VHSS_MV &Mx, const VHSS_MV &My)
 {
+    (void)pk;
     add(Mz[0], Mx[0], My[0]);
     add(Mz[1], Mx[1], My[1]);
     add(Mz[2], Mx[2], My[2]);
@@ -78,6 +80,7 @@ void VHSS_AddMemory(VHSS_MV &Mz, const VHSS_PK &pk, const VHSS_MV &Mx, const VHS
 
 void VHSS_SubMemory(VHSS_MV &Mz, const VHSS_PK &pk, const VHSS_MV &Mx, const VHSS_MV &My)
 {
+    (void)pk;
     sub(Mz[0], Mx[0], My[0]);
     sub(Mz[1], Mx[1], My[1]);
     sub(Mz[2], Mx[2], My[2]);
@@ -92,7 +95,7 @@ void VHSS_AddInput(VHSS_CT &I, const VHSS_PK &pk, const VHSS_CT &Ix, const VHSS_
     MulMod(I[1][1], Ix[1][1], Iy[1][1], pk.N2);
 }
 
-void VHSS_Evaluate(VHSS_MV &y_b_res, int b, const vector<VHSS_CT> &Ix, const VHSS_PK &pk, const VHSS_EK &ekb, int &prf_key, vector<vector<int>> F_TEST)
+void VHSS_Evaluate(VHSS_MV &y_b_res, int b, const vector<VHSS_CT> &Ix, const VHSS_PK &pk, const VHSS_EK &ekb, int &prf_key, const vector<vector<int>> &F_TEST)
 {
     VHSS_MV M1, Monomial, tmp;
     M1[0] = b;
@@ -105,13 +108,12 @@ void VHSS_Evaluate(VHSS_MV &y_b_res, int b, const vector<VHSS_CT> &Ix, const VHS
     y_b_res[2] = 0;
     y_b_res[3] = 0;
 
-    int i, j, k;
-    for (i = 0; i < F_TEST.size(); ++i)
+    for (std::size_t i = 0; i < F_TEST.size(); ++i)
     {
         copy(begin(M1), end(M1), begin(Monomial));
-        for (j = 0; j < Ix.size(); ++j)
+        for (std::size_t j = 0; j < Ix.size(); ++j)
         {
-            for (k = 0; k < F_TEST[i][j]; ++k)
+            for (int k = 0; k < F_TEST[i][j]; ++k)
             {
                 VHSS_Mul(tmp, b, pk, Ix[j], Monomial, prf_key);
                 copy(begin(tmp), end(tmp), begin(Monomial));

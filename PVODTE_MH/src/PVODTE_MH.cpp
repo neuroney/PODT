@@ -7,6 +7,9 @@ void KeyGen(Para &param, VHSS_EK &ek0, VHSS_EK &ek1, VHSS_VK &vk)
 
 void KeyFree(Para &param, VHSS_EK &ek0, VHSS_EK &ek1)
 {
+    (void)param;
+    (void)ek0;
+    (void)ek1;
     // Nothing to free for VHSS_EK type (ZZ)
 }
 
@@ -20,6 +23,7 @@ void FeatureSelection2(Mat<VHSS_CT> &Ix, const Para &param, const vec_ZZ &x, con
         for (int j = 0; j < param.t; j++)
         {
             first = true;
+            VHSS_Input(temp, param.pk, ZZ(0));
             for (int k = 0; k < param.n; ++k)
             {
                 if (bit(x[k], j) == 1)

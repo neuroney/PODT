@@ -16,4 +16,4 @@ void HSS_DDLog(ZZ &z, const HSS_PK &pk, const ZZ &g);
 void HSS_AddMemory(HSS_MV &Mz, const HSS_PK &pk, const HSS_MV &Mx, const HSS_MV &My);
 void HSS_SubMemory(HSS_MV &Mz, const HSS_PK &pk, const HSS_MV &Mx, const HSS_MV &My);
 void HSS_AddInput(HSS_CT &I, const HSS_PK &pk, const HSS_CT &Ix, const HSS_CT &Iy);
-void HSS_Evaluate(HSS_MV &y_b_res, int b, const vector<HSS_CT> &Ix, const HSS_PK &pk, const HSS_EK &ekb, int &prf_key, vector<vector<int>> F_TEST);
+void HSS_Evaluate(HSS_MV &y_b_res, int b, const vector<HSS_CT> &Ix, const HSS_PK &pk, const HSS_EK &ekb, int &prf_key, const vector<vector<int>> &F_TEST);
