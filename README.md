@@ -2,7 +2,7 @@
 
 PODT is a CMake-based C++ research artifact for secure decision tree evaluation. This repository accompanies the following paper:
 
-> J. Li and L. F. Zhang. `Silent Guardians: Independent and Secure Decision Tree Evaluation Without Chatter.` *IEEE Transactions on Dependable and Secure Computing*, 2026. [https://doi.org/10.1109/TDSC.2026.3675596](https://doi.org/10.1109/TDSC.2026.3675596)
+> J. Li and L. F. Zhang. `Silent Guardians: Independent and Secure Decision Tree Evaluation Without Chatter.` in *IEEE Transactions on Dependable and Secure Computing*, vol. 23, no. 4, pp. 7691-7708, 2026. [https://doi.org/10.1109/TDSC.2026.3675596](https://doi.org/10.1109/TDSC.2026.3675596)
 
 The repository contains three protocol implementations:
 
@@ -159,7 +159,9 @@ If you use this repository in academic work, please cite:
   title = {Silent Guardians: Independent and Secure Decision Tree Evaluation Without Chatter},
   journal = {IEEE Transactions on Dependable and Secure Computing},
   year = {2026},
-  pages = {1--18},
+  volume = {23},
+  number = {4},
+  pages = {7691--7708},
   doi = {10.1109/TDSC.2026.3675596}
 }
 ```
